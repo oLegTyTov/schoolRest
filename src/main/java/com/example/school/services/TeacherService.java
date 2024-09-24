@@ -92,7 +92,7 @@ public class TeacherService {
         teacherRepository.save(teacher);
         // Можна додати явне збереження вчителя, якщо це необхідно
         // teacherRepository.save(teacher);
-
+        
         return true;
     }
 

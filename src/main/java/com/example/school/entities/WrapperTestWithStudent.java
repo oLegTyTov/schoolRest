@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Data
 @NoArgsConstructor
-public class WrapperlTestWithStudent {
+public class WrapperTestWithStudent {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -28,7 +28,7 @@ public class WrapperlTestWithStudent {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        WrapperlTestWithStudent that = (WrapperlTestWithStudent) o;
+        WrapperTestWithStudent that = (WrapperTestWithStudent) o;
         return Objects.equals(id, that.id);
     }
 

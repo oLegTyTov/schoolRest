@@ -64,5 +64,8 @@ public class TeacherController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("error associateTeacherToExtraCurricularCourses");
         }
     }
+    public ResponseEntity<String> addWrapperTestWithStudent(@RequestBody WrapperTestWithStudent wrapperlTestWithStudent)
+    {
     
+    }
 }

@@ -19,7 +19,7 @@ public class Studente extends Person {
     private Set<SchoolDebt> schoolDebts = new HashSet<>();
 
     @OneToMany(mappedBy = "studente", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    private Set<WrapperlTestWithStudent> wrapperlTestWithStudents = new HashSet<>();
+    private Set<WrapperTestWithStudent> wrapperlTestWithStudents = new HashSet<>();
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(

@@ -15,7 +15,7 @@ public class SchoolDebt {
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "wrapper_test_with_student_id")
-    private WrapperlTestWithStudent wrapperlTestWithStudent;
+    private WrapperTestWithStudent wrapperlTestWithStudent;
         @Override
     public boolean equals(Object o) {
         if (this == o) return true;
