@@ -74,9 +74,9 @@ public class TeacherController {
     }
 @PostMapping("/addWrapperTestWithStudent")
     public ResponseEntity<String> addWrapperTestWithStudent(
-            @RequestBody WrapperTestWithStudentDTO wrapperlTestWithStudentDTO)// teacher addes test with mark to student
+            @RequestBody WrapperTestWithStudentDTO wrapperTestWithStudentDTO)// teacher addes test with mark to student
     {
-        if (studentService.addWrapperTestWithStudent(wrapperlTestWithStudentDTO)) {
+        if (studentService.addWrapperTestWithStudent(wrapperTestWithStudentDTO)) {
             return ResponseEntity.status(HttpStatus.CREATED).body("good addWrapperTestWithStudent");
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("error addWrapperTestWithStudent");
