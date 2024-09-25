@@ -19,4 +19,8 @@ public class MarkService {
             return true;
         }
     }
+    public Mark getMarkByName(short mark)
+    {
+    return markRepository.findByMark(mark);
+    }
 }

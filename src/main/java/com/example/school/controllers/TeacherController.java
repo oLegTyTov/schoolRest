@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-
+import com.example.school.dtos.WrapperTestWithStudentDTO;
 import com.example.school.entities.Extracurricularcourse;
 import com.example.school.entities.Person;
 import com.example.school.entities.SchoolTest;
@@ -21,8 +21,8 @@ import com.example.school.entities.Subject;
 import com.example.school.entities.Teacher;
 import com.example.school.services.PersonService;
 import com.example.school.services.SchoolTestService;
+import com.example.school.services.StudentService;
 import com.example.school.services.TeacherService;
-
 
 @RestController
 @RequestMapping("/teacher")
@@ -31,11 +31,15 @@ public class TeacherController {
     @Autowired
     private TeacherService teacherService;
     @Autowired
+    private StudentService studentService;
+    @Autowired
     private PersonService personService;
     @Autowired
     private SchoolTestService schoolTestService;
+
     @PostMapping("/associateSubjectToTeacher")
-    @Transactional//без цьої анотації метод не буде працювати якщо в сервісі йде збереження через setter а не через метод save
+    @Transactional // без цьої анотації метод не буде працювати якщо в сервісі йде збереження через
+                   // setter а не через метод save
     public ResponseEntity<String> associateSubjectToTeacher(@RequestBody Subject subjects[],
             @AuthenticationPrincipal UserDetails userDetails) {
         Person person = personService.findByUsername(userDetails.getUsername());
@@ -46,6 +50,7 @@ public class TeacherController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("error associateSubjectToTeacher");
         }
     }
+
     @PostMapping("/addSchoolTest")
     public ResponseEntity<String> addSchoolTest(@RequestBody SchoolTest schoolTest) {
         if (schoolTestService.addSchoolTest(schoolTest)) {
@@ -54,8 +59,11 @@ public class TeacherController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("SchoolTest wasn't registered");
         }
     }
+
     @PostMapping("/associateTeacherToExtraCurricularCourses")
-    public ResponseEntity<String> associateTeacherToExtraCurricularCourses(@RequestBody Extracurricularcourse extracurricularcourses[],@AuthenticationPrincipal UserDetails userDetails) {
+    public ResponseEntity<String> associateTeacherToExtraCurricularCourses(
+            @RequestBody Extracurricularcourse extracurricularcourses[],
+            @AuthenticationPrincipal UserDetails userDetails) {
         Person person = personService.findByUsername(userDetails.getUsername());
         Teacher teacher = (Teacher) person;
         if (teacherService.associateTeacherToExtraCurricularCourses(extracurricularcourses, teacher)) {
@@ -64,8 +72,14 @@ public class TeacherController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("error associateTeacherToExtraCurricularCourses");
         }
     }
-    public ResponseEntity<String> addWrapperTestWithStudent(@RequestBody WrapperTestWithStudent wrapperlTestWithStudent)
+@PostMapping("/addWrapperTestWithStudent")
+    public ResponseEntity<String> addWrapperTestWithStudent(
+            @RequestBody WrapperTestWithStudentDTO wrapperlTestWithStudentDTO)// teacher addes test with mark to student
     {
-    
+        if (studentService.addWrapperTestWithStudent(wrapperlTestWithStudentDTO)) {
+            return ResponseEntity.status(HttpStatus.CREATED).body("good addWrapperTestWithStudent");
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("error addWrapperTestWithStudent");
+        }
     }
 }
