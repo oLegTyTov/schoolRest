@@ -85,7 +85,7 @@ public class TeacherController {
         }
     }
     @PostMapping("/updateStudentDebit")//Student could repass exam
-    public ResponseEntity<String> removeStudentDebit(@RequestBody WrapperTestStudentWithRecoveredTypeDTO wrapperTestStudentWithRecoveredTypeDTO) {
+    public ResponseEntity<String> updateStudentDebit(@RequestBody WrapperTestStudentWithRecoveredTypeDTO wrapperTestStudentWithRecoveredTypeDTO) {
         if (wrapperTestPersonService.removeStudentDebit(wrapperTestStudentWithRecoveredTypeDTO)) {
             return ResponseEntity.status(HttpStatus.OK).body("good updateStudentDebit");
         } else {

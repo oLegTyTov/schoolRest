@@ -75,10 +75,12 @@ public class WrapperTestPersonService {
         Person person = personRepository.findByUsername(wrapperTestStudentWithRecoveredTypeDTO.getStudentUsername())
                 .get();
         if (person instanceof Studente) {
+            Studente studente = (Studente) personRepository
+                    .findByUsername(wrapperTestStudentWithRecoveredTypeDTO.getStudentUsername()).get();
+            SchoolTest schoolTest = schoolTestRepository
+                    .findByName(wrapperTestStudentWithRecoveredTypeDTO.getSchoolTestName());
             WrapperTestWithStudent wrapperTestWithStudent = wrapperTestPersonRepository.findByStudenteAndSchoolTest(
-                    (Studente) personRepository
-                            .findByUsername(wrapperTestStudentWithRecoveredTypeDTO.getStudentUsername()).get(),
-                    schoolTestRepository.findByName(wrapperTestStudentWithRecoveredTypeDTO.getSchoolTestName()));
+                    studente, schoolTest);
             if (wrapperTestWithStudent == null) {
                 return false;
             }

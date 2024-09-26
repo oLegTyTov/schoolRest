@@ -13,11 +13,12 @@ public class WrapperTestWithStudent {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    
 
     @ManyToOne(fetch = FetchType.LAZY) 
     @JoinColumn(name = "mark_id")
     private Mark mark;
-    @OneToOne
+    @OneToOne(mappedBy = "wrapperlTestWithStudent")
     private SchoolDebt schoolDebt;
     @ManyToOne(fetch = FetchType.LAZY) 
     @JoinColumn(name = "school_test_id") 
