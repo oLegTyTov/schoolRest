@@ -19,4 +19,8 @@ public class SchoolDebtService {
             return true;
         }
     }
+    public void updateDebt(SchoolDebt schoolDebt)
+    {
+    schoolDebtRepository.save(schoolDebt);
+    }
 }

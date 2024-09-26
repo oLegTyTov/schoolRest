@@ -13,9 +13,13 @@ public class SchoolDebt {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne
     @JoinColumn(name = "wrapper_test_with_student_id")
     private WrapperTestWithStudent wrapperlTestWithStudent;
+    @ManyToOne
+    @JoinColumn(name = "recovered_type_id")
+    //there are 3 types:recovered,notrecovered,notdoneyet
+    private RecoveredType recoveredType;
         @Override
     public boolean equals(Object o) {
         if (this == o) return true;

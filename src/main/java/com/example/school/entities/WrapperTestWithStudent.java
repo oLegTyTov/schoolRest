@@ -17,7 +17,8 @@ public class WrapperTestWithStudent {
     @ManyToOne(fetch = FetchType.LAZY) 
     @JoinColumn(name = "mark_id")
     private Mark mark;
-
+    @OneToOne
+    private SchoolDebt schoolDebt;
     @ManyToOne(fetch = FetchType.LAZY) 
     @JoinColumn(name = "school_test_id") 
     private SchoolTest schoolTest;
