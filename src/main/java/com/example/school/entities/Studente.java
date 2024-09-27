@@ -21,7 +21,7 @@ public class Studente extends Person {
     @OneToMany(mappedBy = "studente", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<WrapperTestWithStudent> wrapperlTestWithStudents = new HashSet<>();
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToMany( fetch = FetchType.LAZY)
     @JoinTable(
         name = "student_extracurricularcourse",
         joinColumns = @JoinColumn(name = "student_id"),

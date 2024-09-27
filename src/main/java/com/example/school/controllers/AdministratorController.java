@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.school.entities.Extracurricularcourse;
@@ -14,6 +15,7 @@ import com.example.school.entities.Subject;
 import com.example.school.services.ExtracurricularcourseService;
 import com.example.school.services.MarkService;
 import com.example.school.services.SchoolClassService;
+import com.example.school.services.StudentService;
 import com.example.school.services.SubjectService;
 
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,7 +33,8 @@ public class AdministratorController {
     private ExtracurricularcourseService extracurricularcourseService;
     @Autowired 
     private MarkService markService;
-
+    @Autowired
+    private StudentService studentService;
     @PostMapping("/addSubject")
     public ResponseEntity<String> addSubject(@RequestBody Subject subject) {
         if (subjectService.addSubject(subject)) {
@@ -66,4 +69,13 @@ public class AdministratorController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Mark wasn't registered ");
         }
     }
+    @PostMapping("/deleteStudent")
+    public ResponseEntity<String> deleteStudent(@RequestParam String username) {
+        if (studentService.deleteStudent(username)) {
+            return ResponseEntity.status(HttpStatus.CREATED).body("good deleteStudent");
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(" error deleteStudent");
+        }
+    }
+    //deleteTeacher TODO
 }
