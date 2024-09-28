@@ -18,12 +18,7 @@ public class Teacher extends Person {
     )
     private Set<Extracurricularcourse> extracurricularcourses = new HashSet<>();
 
-    @ManyToMany( fetch = FetchType.LAZY)
-    @JoinTable(
-        name = "teacher_schoolclass",
-        joinColumns = @JoinColumn(name = "teacher_id"),
-        inverseJoinColumns = @JoinColumn(name = "schoolclass_id")
-    )
+    @ManyToMany( fetch = FetchType.LAZY,mappedBy = "teachers")
     private Set<SchoolClass> schoolClasses = new HashSet<>();
 
     @ManyToMany( fetch = FetchType.LAZY)

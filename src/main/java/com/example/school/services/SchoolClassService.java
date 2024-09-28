@@ -5,8 +5,9 @@ import org.springframework.stereotype.Service;
 
 import com.example.school.entities.SchoolClass;
 import com.example.school.entities.Subject;
+import com.example.school.entities.Teacher;
 import com.example.school.repositories.SchoolClassRepository;
-
+import java.util.List;
 @Service
 public class SchoolClassService {
     @Autowired
@@ -19,4 +20,9 @@ private SchoolClassRepository schoolClassRepository;
             return true;
         }
     }
+    public List<String> findNamesOfClassByTeacherName(Teacher teacher)
+    {
+    return schoolClassRepository.findByTeachersContaining(teacher).stream().map(e->e.getName()).toList();
+    }
 }
+

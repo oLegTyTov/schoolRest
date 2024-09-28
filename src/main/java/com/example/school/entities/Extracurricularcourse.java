@@ -25,10 +25,10 @@ public class Extracurricularcourse {
     @Column(unique = true)
     private String name;
 
-    @ManyToMany(mappedBy = "extracurricularcourses", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "extracurricularcourses", fetch = FetchType.LAZY)
     private Set<Studente> students = new HashSet<>();
 
-    @ManyToMany(mappedBy = "extracurricularcourses", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "extracurricularcourses", fetch = FetchType.LAZY)
     private Set<Teacher> teachers = new HashSet<>();
         @Override
     public boolean equals(Object o) {

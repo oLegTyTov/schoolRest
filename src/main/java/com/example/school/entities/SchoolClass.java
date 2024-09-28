@@ -15,12 +15,12 @@ public class SchoolClass {
 
     @Column(nullable = false)
     private String name;
-    @OneToOne
+    @OneToOne(mappedBy = "schoolClass")
     private Coordinator Coordinator;
     @OneToMany(mappedBy = "schoolClass", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Studente> students = new HashSet<>();
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToMany( fetch = FetchType.LAZY)
     @JoinTable(
         name = "schoolclass_teacher",
         joinColumns = @JoinColumn(name = "schoolclass_id"),

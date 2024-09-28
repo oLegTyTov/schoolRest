@@ -1,5 +1,6 @@
 package com.example.school.controllers;
 
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.RequestEntity;
@@ -13,18 +14,23 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-
+import java.util.Set;
 import com.example.school.dtos.WrapperTestStudentWithRecoveredTypeDTO;
 import com.example.school.dtos.WrapperTestWithStudentDTO;
 import com.example.school.entities.Extracurricularcourse;
 import com.example.school.entities.Person;
+import com.example.school.entities.SchoolClass;
 import com.example.school.entities.SchoolTest;
 import com.example.school.entities.Subject;
 import com.example.school.entities.Teacher;
 import com.example.school.services.PersonService;
+import com.example.school.services.SchoolClassService;
 import com.example.school.services.SchoolTestService;
 import com.example.school.services.TeacherService;
 import com.example.school.services.WrapperTestPersonService;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 @RestController
 @RequestMapping("/teacher")
@@ -38,7 +44,8 @@ public class TeacherController {
     private PersonService personService;
     @Autowired
     private SchoolTestService schoolTestService;
-
+    @Autowired
+    private SchoolClassService schoolClassService;
     @PostMapping("/associateSubjectToTeacher")
     @Transactional // без цьої анотації метод не буде працювати якщо в сервісі йде збереження через
                    // setter а не через метод save
@@ -92,5 +99,11 @@ public class TeacherController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("error updateStudentDebit");
         }
     }
-    
+    @GetMapping("/getClassesTeacher")
+    public ResponseEntity<String> getClassesTeacher(@AuthenticationPrincipal UserDetails userDetails)
+    {
+       List<String>schoolClassesName=schoolClassService.findNamesOfClassByTeacherName((Teacher)personService.findByUsername(userDetails.getUsername()));
+       return ResponseEntity.status(HttpStatus.OK).body("Teacher "+userDetails.getUsername()+" teaches in these classes:"+schoolClassesName.stream().map(e->e+" ").toList());
+    }
+        
 }
