@@ -9,9 +9,10 @@ import com.example.school.repositories.ExtracurricularcourseRepository;
 
 @Service
 public class ExtracurricularcourseService {
-@Autowired
+    @Autowired
     private ExtracurricularcourseRepository extracurricularcourseRepository;
-        public boolean addExtracurricularcourse(Extracurricularcourse extracurricularcourse) {
+
+    public boolean addExtracurricularcourse(Extracurricularcourse extracurricularcourse) {
         if (extracurricularcourseRepository.existsByName(extracurricularcourse.getName())) {
             return false;
         } else {
@@ -19,12 +20,12 @@ public class ExtracurricularcourseService {
             return true;
         }
     }
-    public Extracurricularcourse findByName(String name)
-    {
-    return extracurricularcourseRepository.findByName(name);
+
+    public Extracurricularcourse findByName(String name) {
+        return extracurricularcourseRepository.findByName(name);
     }
-    public boolean existsByName(String name)
-    {
-    return extracurricularcourseRepository.existsByName(name);
+
+    public boolean existsByName(String name) {
+        return extracurricularcourseRepository.existsByName(name);
     }
 }

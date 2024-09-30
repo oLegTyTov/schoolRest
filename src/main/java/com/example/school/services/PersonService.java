@@ -10,22 +10,21 @@ import org.springframework.stereotype.Service;
 
 import com.example.school.entities.MainTokens;
 import com.example.school.entities.Person;
-import com.example.school.entities.Studente;
 import com.example.school.repositories.PersonRepository;
 import com.example.school.repositories.RoleRepository;
 import com.example.school.utils.JwtUtils;
 
 @Service
 public class PersonService implements UserDetailsService {
-    @Autowired
-    private PersonRepository personRepository;
-    @Autowired
-    private JwtUtils jwtUtils;
-    @Autowired
-    private RoleRepository roleRepository;
 
     @Autowired
-    private PasswordEncoder passwordEncoder;
+    private PersonRepository personRepository; // Repository for Person entity
+    @Autowired
+    private JwtUtils jwtUtils; // Utility for JWT operations
+    @Autowired
+    private RoleRepository roleRepository; // Repository for Role management
+    @Autowired
+    private PasswordEncoder passwordEncoder; // For password encryption
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -40,14 +39,15 @@ public class PersonService implements UserDetailsService {
 
     public boolean addPerson(Person person) {
         String roleName = person.getRole().getName();
+        // Check if the username already exists or the role is invalid
         if (personRepository.existsByUsername(person.getUsername()) || !roleRepository.existsByName(roleName)) {
             return false;
         } else {
             person.setRole(roleRepository.findByName(roleName));
-            // Encode the password
+            // Encode the password before saving
             person.setPassword(passwordEncoder.encode(person.getPassword()));
             personRepository.save(person);
-            return true;
+            return true; // Person added successfully
         }
     }
 
@@ -58,19 +58,21 @@ public class PersonService implements UserDetailsService {
             mainToken.setAccessToken(jwtUtils.generateAccessToken(username));
             mainToken.setRefreshToken(jwtUtils.generateRefreshToken(username));
         }
-        return mainToken;
+        return mainToken; // Return tokens if login is successful
     }
 
     public boolean checkPerson(String username, String password) {
+        // Check if the user exists and validate the password
         if (personRepository.existsByUsername(username)) {
             Person person = personRepository.findByUsername(username).get();
             return passwordEncoder.matches(password, person.getPassword());
         } else {
-            return false;
+            return false; // User does not exist
         }
     }
-    public Person findByUsername(String username)
-    {
-    return personRepository.findByUsername(username).get();
+
+    public Person findByUsername(String username) {
+        // Find person by username, throwing an exception if not found
+        return personRepository.findByUsername(username).orElse(null);
     }
 }

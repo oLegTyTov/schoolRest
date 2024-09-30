@@ -1,9 +1,10 @@
 package com.example.school.services;
 
-import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import java.util.HashSet;
+import java.util.Arrays; // For working with arrays
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,83 +18,67 @@ import com.example.school.repositories.TeacherRepository;
 
 @Service
 public class TeacherService {
+
     @Autowired
-    private TeacherRepository teacherRepository;
+    private TeacherRepository teacherRepository;  
+    private PersonRepository personRepository;    
     @Autowired
-    private PersonRepository personRepository;
+    private RoleRepository roleRepository;       
     @Autowired
-    private RoleRepository roleRepository;
+    private SubjectService subjectService;       
     @Autowired
-    private SubjectService subjectService;
-    @Autowired
-    private ExtracurricularcourseService extracurricularcourseService;
+    private ExtracurricularcourseService extracurricularcourseService; 
 
     public boolean associateSubjectToTeacher(Subject[] subjects, Teacher teacher) {
+        // Check for duplicates and existing subjects for the teacher
         long distinctSubjectsCount = Stream.of(subjects).distinct().count();
-        if (distinctSubjectsCount != subjects.length) {// якщо ми маємо повторення в масиві
-            return false;
-        }
-        Set<Subject> teacherSubjects = teacher.getSubjects();
-        if (teacherSubjects != null) {
-            for (Subject subject : subjects) {
-                if (teacherSubjects.contains(subject)) {// якщо вчитель вже має цей предмет
-                    return false;
-                }
-            }
+        if (distinctSubjectsCount != subjects.length || Stream.of(subjects).anyMatch(teacher.getSubjects()::contains)) {
+            return false; // Return false if there are duplicates or already assigned subjects
         }
 
-        Set<Subject> validSubjects = new HashSet<>();
-        for (Subject subject : subjects) {
-            if (subjectService.existsByName(subject.getName())) {
-                validSubjects.add(subjectService.findByName(subject.getName()));
-            } else {
-                return false;// якщо не існує такого предмета
-            }
+        // Validate subjects and collect valid ones
+        Set<Subject> validSubjects = Stream.of(subjects)
+                .map(Subject::getName)
+                .map(name -> subjectService.existsByName(name) ? subjectService.findByName(name) : null)
+                .filter(Objects::nonNull) // Filter out nulls for non-existent subjects
+                .collect(Collectors.toSet());
+
+        // If valid subjects count does not match input, return false
+        if (validSubjects.size() != subjects.length) {
+            return false;
         }
-        teacher.setSubjects(validSubjects);// хз чи буде працювати без прямого save
+
+        teacher.setSubjects(validSubjects); // Set valid subjects to teacher
         return true;
     }
 
-    public boolean associateTeacherToExtraCurricularCourses(Extracurricularcourse extracurricularCourses[],
-            Teacher teacher) {
-
-        // Перевірка на унікальність курсів у масиві
+    public boolean associateTeacherToExtraCurricularCourses(Extracurricularcourse[] extracurricularCourses, Teacher teacher) {
+        // Check for duplicates
         long distinctCoursesCount = Stream.of(extracurricularCourses).distinct().count();
         if (distinctCoursesCount != extracurricularCourses.length) {
-            // Якщо є дублікати курсів у масиві, повертаємо false
+            return false; // Return false if duplicates exist
+        }
+
+        Set<Extracurricularcourse> teacherCourses = teacher.getExtracurricularcourses();
+        if (teacherCourses != null && Stream.of(extracurricularCourses).anyMatch(teacherCourses::contains)) {
+            return false; // Return false if any course is already assigned
+        }
+
+        // Validate courses and collect valid ones
+        Set<Extracurricularcourse> validCourses = Arrays.stream(extracurricularCourses)
+                .map(e -> extracurricularcourseService.existsByName(e.getName()) 
+                        ? extracurricularcourseService.findByName(e.getName()) 
+                        : null)
+                .filter(Objects::nonNull) // Filter out nulls for invalid courses
+                .collect(Collectors.toSet());
+
+        // Return false if not all courses are valid
+        if (validCourses.size() != extracurricularCourses.length) {
             return false;
         }
 
-        // Отримання курсів, до яких вже приписаний вчитель
-        Set<Extracurricularcourse> teacherCourses = teacher.getExtracurricularcourses();
-        if (teacherCourses != null) {
-            // Перевіряємо, чи вчитель вже має якісь з цих курсів
-            for (Extracurricularcourse course : extracurricularCourses) {
-                if (teacherCourses.contains(course)) {
-                    return false; // Якщо курс вже закріплений за вчителем, повертаємо false
-                }
-            }
-        }
-
-        // Створюємо множину для збереження валідних курсів
-        Set<Extracurricularcourse> validCourses = new HashSet<>();
-        for (Extracurricularcourse course : extracurricularCourses) {
-            // Перевіряємо, чи існує курс у базі даних
-            if (extracurricularcourseService.existsByName(course.getName())) {
-                // Додаємо курс, який знайдено у базі даних
-                validCourses.add(extracurricularcourseService.findByName(course.getName()));
-            } else {
-                return false; // Якщо курс не знайдено, повертаємо false
-            }
-        }
-
-        // Оновлюємо курси вчителя
-        teacher.setExtracurricularcourses(validCourses);
-        teacherRepository.save(teacher);
-        // Можна додати явне збереження вчителя, якщо це необхідно
-        // teacherRepository.save(teacher);
-        
+        teacher.setExtracurricularcourses(validCourses); // Set valid courses to teacher
+        teacherRepository.save(teacher); // Persist changes to the database
         return true;
     }
-
 }

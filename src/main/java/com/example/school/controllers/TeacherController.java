@@ -47,8 +47,8 @@ public class TeacherController {
     @Autowired
     private SchoolClassService schoolClassService;
     @PostMapping("/associateSubjectToTeacher")
-    @Transactional // без цьої анотації метод не буде працювати якщо в сервісі йде збереження через
-                   // setter а не через метод save
+    @Transactional // without this annotation, the method will not work if in the service is saved entity through setter
+                   // and not through the save-method
     public ResponseEntity<String> associateSubjectToTeacher(@RequestBody Subject subjects[],
             @AuthenticationPrincipal UserDetails userDetails) {
         Person person = personService.findByUsername(userDetails.getUsername());
