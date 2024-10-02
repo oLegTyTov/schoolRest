@@ -1,15 +1,16 @@
 package com.example.school.services;
 
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import java.util.Arrays; // For working with arrays
+import java.util.stream.Stream; // For working with arrays
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.school.entities.Extracurricularcourse;
+import com.example.school.entities.SchoolClass;
 import com.example.school.entities.Subject;
 import com.example.school.entities.Teacher;
 import com.example.school.repositories.PersonRepository;
@@ -18,16 +19,16 @@ import com.example.school.repositories.TeacherRepository;
 
 @Service
 public class TeacherService {
-
     @Autowired
-    private TeacherRepository teacherRepository;  
-    private PersonRepository personRepository;    
+    private TeacherRepository teacherRepository;
     @Autowired
-    private RoleRepository roleRepository;       
+    private PersonRepository personRepository;
     @Autowired
-    private SubjectService subjectService;       
+    private RoleRepository roleRepository;
     @Autowired
-    private ExtracurricularcourseService extracurricularcourseService; 
+    private SubjectService subjectService;
+    @Autowired
+    private ExtracurricularcourseService extracurricularcourseService;
 
     public boolean associateSubjectToTeacher(Subject[] subjects, Teacher teacher) {
         // Check for duplicates and existing subjects for the teacher
@@ -52,7 +53,8 @@ public class TeacherService {
         return true;
     }
 
-    public boolean associateTeacherToExtraCurricularCourses(Extracurricularcourse[] extracurricularCourses, Teacher teacher) {
+    public boolean associateTeacherToExtraCurricularCourses(Extracurricularcourse[] extracurricularCourses,
+            Teacher teacher) {
         // Check for duplicates
         long distinctCoursesCount = Stream.of(extracurricularCourses).distinct().count();
         if (distinctCoursesCount != extracurricularCourses.length) {
@@ -66,8 +68,8 @@ public class TeacherService {
 
         // Validate courses and collect valid ones
         Set<Extracurricularcourse> validCourses = Arrays.stream(extracurricularCourses)
-                .map(e -> extracurricularcourseService.existsByName(e.getName()) 
-                        ? extracurricularcourseService.findByName(e.getName()) 
+                .map(e -> extracurricularcourseService.existsByName(e.getName())
+                        ? extracurricularcourseService.findByName(e.getName())
                         : null)
                 .filter(Objects::nonNull) // Filter out nulls for invalid courses
                 .collect(Collectors.toSet());
@@ -80,5 +82,29 @@ public class TeacherService {
         teacher.setExtracurricularcourses(validCourses); // Set valid courses to teacher
         teacherRepository.save(teacher); // Persist changes to the database
         return true;
+    }
+
+    public boolean deleteTeacher(String teacherUsername) {
+        if (personRepository.existsByUsername(teacherUsername)) {
+            // before remove teacher we must remove all manytomany entities asscocciated to
+            // this teacher
+            Teacher teacher = (Teacher) personRepository.findByUsername(teacherUsername).get();
+            Set<Extracurricularcourse> extracurricularcourses = teacher.getExtracurricularcourses();
+            if (extracurricularcourses != null && !extracurricularcourses.isEmpty()) {
+                teacherRepository.deleteExtracurricularcourseByTeacherId(teacher.getId());
+            }
+            Set<Subject> subjects = teacher.getSubjects();
+            if (subjects != null && !subjects.isEmpty()) {
+                teacherRepository.deleteSubjectsByTeacherId(teacher.getId());
+            }
+            Set<SchoolClass> schoolClasses = teacher.getSchoolClasses();
+            if (schoolClasses != null && !schoolClasses.isEmpty()) {
+                teacherRepository.deleteSchoolClassesByTeacherId(teacher.getId());
+            }
+            teacherRepository.deleteByUsername(teacherUsername);
+            return true;
+        } else {
+            return false;
+        }
     }
 }
