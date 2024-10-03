@@ -20,7 +20,7 @@ public class ExtracurricularcourseService {
             return true;
         }
     }
-
+    
     public Extracurricularcourse findByName(String name) {
         return extracurricularcourseRepository.findByName(name);
     }
