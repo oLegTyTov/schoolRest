@@ -28,8 +28,11 @@ public class PersonService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Person person = personRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
+        Person person = personRepository.findByUsername(username);
+        if(person==null)
+        {
+        throw new UsernameNotFoundException(username);
+        }
         return User.builder()
                 .username(person.getUsername())
                 .password(person.getPassword())
@@ -64,7 +67,7 @@ public class PersonService implements UserDetailsService {
     public boolean checkPerson(String username, String password) {
         // Check if the user exists and validate the password
         if (personRepository.existsByUsername(username)) {
-            Person person = personRepository.findByUsername(username).get();
+            Person person = personRepository.findByUsername(username);
             return passwordEncoder.matches(password, person.getPassword());
         } else {
             return false; // User does not exist
@@ -73,6 +76,6 @@ public class PersonService implements UserDetailsService {
 
     public Person findByUsername(String username) {
         // Find person by username, throwing an exception if not found
-        return personRepository.findByUsername(username).orElse(null);
+        return personRepository.findByUsername(username);
     }
 }

@@ -1,4 +1,5 @@
 package com.example.school.services;
+
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -15,13 +16,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import com.example.school.entities.MainTokens;
 import com.example.school.entities.Person;
 import com.example.school.entities.Role;
-import com.example.school.entities.Teacher;  // Додано для конкретного тестування
+import com.example.school.entities.Teacher; // Додано для конкретного тестування
 import com.example.school.repositories.PersonRepository;
 import com.example.school.repositories.RoleRepository;
-import com.example.school.services.PersonService;
 import com.example.school.utils.JwtUtils;
-
-import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
 public class PersonServiceTest {
@@ -56,7 +54,7 @@ public class PersonServiceTest {
     @Test
     public void testLoadUserByUsername_UserExists() {
         // Arrange
-        when(personRepository.findByUsername(teacher.getUsername())).thenReturn(Optional.of(teacher));
+        when(personRepository.findByUsername(teacher.getUsername())).thenReturn(teacher); // Тепер без Optional
 
         // Act
         UserDetails result = personService.loadUserByUsername(teacher.getUsername());
@@ -71,7 +69,7 @@ public class PersonServiceTest {
     @Test
     public void testLoadUserByUsername_UserNotFound() {
         // Arrange
-        when(personRepository.findByUsername(teacher.getUsername())).thenReturn(Optional.empty());
+        when(personRepository.findByUsername(teacher.getUsername())).thenReturn(null); // Тепер повертається null
 
         // Act & Assert
         assertThrows(UsernameNotFoundException.class, () -> {
@@ -129,7 +127,7 @@ public class PersonServiceTest {
         String username = teacher.getUsername();
         String password = teacher.getPassword();
         when(personRepository.existsByUsername(username)).thenReturn(true);
-        when(personRepository.findByUsername(username)).thenReturn(Optional.of(teacher));
+        when(personRepository.findByUsername(username)).thenReturn(teacher); // Тепер без Optional
         when(passwordEncoder.matches(password, teacher.getPassword())).thenReturn(true);
         when(jwtUtils.generateAccessToken(username)).thenReturn("accessToken");
         when(jwtUtils.generateRefreshToken(username)).thenReturn("refreshToken");
@@ -149,7 +147,7 @@ public class PersonServiceTest {
         String username = teacher.getUsername();
         String password = teacher.getPassword();
         when(personRepository.existsByUsername(username)).thenReturn(true);
-        when(personRepository.findByUsername(username)).thenReturn(Optional.of(teacher));
+        when(personRepository.findByUsername(username)).thenReturn(teacher); // Тепер без Optional
         when(passwordEncoder.matches(password, teacher.getPassword())).thenReturn(false);
 
         // Act
@@ -165,7 +163,7 @@ public class PersonServiceTest {
         String username = teacher.getUsername();
         String password = teacher.getPassword();
         when(personRepository.existsByUsername(username)).thenReturn(true);
-        when(personRepository.findByUsername(username)).thenReturn(Optional.of(teacher));
+        when(personRepository.findByUsername(username)).thenReturn(teacher); // Тепер без Optional
         when(passwordEncoder.matches(password, teacher.getPassword())).thenReturn(true);
 
         // Act
@@ -181,7 +179,7 @@ public class PersonServiceTest {
         String username = teacher.getUsername();
         String password = "wrongPassword"; // Invalid password
         when(personRepository.existsByUsername(username)).thenReturn(true);
-        when(personRepository.findByUsername(username)).thenReturn(Optional.of(teacher));
+        when(personRepository.findByUsername(username)).thenReturn(teacher); // Тепер без Optional
         when(passwordEncoder.matches(password, teacher.getPassword())).thenReturn(false);
 
         // Act

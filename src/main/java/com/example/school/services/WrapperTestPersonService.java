@@ -38,7 +38,7 @@ public class WrapperTestPersonService {
     private short minPassMark;
 
     public boolean addWrapperTestWithStudent(WrapperTestWithStudentDTO wrapperTestWithStudentDTO) {
-        Person person = personRepository.findByUsername(wrapperTestWithStudentDTO.getStudentUsername()).get();
+        Person person = personRepository.findByUsername(wrapperTestWithStudentDTO.getStudentUsername());
         if (person == null) {
             return false;
         }
@@ -72,11 +72,10 @@ public class WrapperTestPersonService {
     }
 
     public boolean removeStudentDebit(WrapperTestStudentWithRecoveredTypeDTO wrapperTestStudentWithRecoveredTypeDTO) {
-        Person person = personRepository.findByUsername(wrapperTestStudentWithRecoveredTypeDTO.getStudentUsername())
-                .get();
+        Person person = personRepository.findByUsername(wrapperTestStudentWithRecoveredTypeDTO.getStudentUsername());
         if (person instanceof Studente) {
             Studente studente = (Studente) personRepository
-                    .findByUsername(wrapperTestStudentWithRecoveredTypeDTO.getStudentUsername()).get();
+                    .findByUsername(wrapperTestStudentWithRecoveredTypeDTO.getStudentUsername());
             SchoolTest schoolTest = schoolTestRepository
                     .findByName(wrapperTestStudentWithRecoveredTypeDTO.getSchoolTestName());
             WrapperTestWithStudent wrapperTestWithStudent = wrapperTestPersonRepository.findByStudenteAndSchoolTest(

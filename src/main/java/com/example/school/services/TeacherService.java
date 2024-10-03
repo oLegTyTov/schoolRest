@@ -88,7 +88,11 @@ public class TeacherService {
         if (personRepository.existsByUsername(teacherUsername)) {
             // before remove teacher we must remove all manytomany entities asscocciated to
             // this teacher
-            Teacher teacher = (Teacher) personRepository.findByUsername(teacherUsername).get();
+            if(!personRepository.existsByUsername(teacherUsername))
+            {
+            return false;
+            }
+            Teacher teacher = (Teacher) personRepository.findByUsername(teacherUsername);
             Set<Extracurricularcourse> extracurricularcourses = teacher.getExtracurricularcourses();
             if (extracurricularcourses != null && !extracurricularcourses.isEmpty()) {
                 teacherRepository.deleteExtracurricularcourseByTeacherId(teacher.getId());
